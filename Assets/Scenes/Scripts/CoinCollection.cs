@@ -36,4 +36,10 @@ public class CoinCollection : MonoBehaviour
     {
         return coinCount;
     }
+    public void SetCoinCount(int count)
+    {
+        coinCount = count;
+        UpdateCoinUI();
+    }
+
 }

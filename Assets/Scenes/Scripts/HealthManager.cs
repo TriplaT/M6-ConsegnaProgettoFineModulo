@@ -14,7 +14,6 @@ public class HealthManager : MonoBehaviour
 
     [Header("Player Reference")]
     [SerializeField] private GameObject playerObject;
-
     [SerializeField] private HealthBarUI healthBarUI;
 
     private bool isDead = false;
@@ -22,33 +21,25 @@ public class HealthManager : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
-        if (healthBarUI == null) Debug.LogWarning("HealthManager: healthBarUI non assegnato!");
-        if (losePanel == null) Debug.LogWarning("HealthManager: losePanel non assegnato!");
-        if (coinCollectedText == null) Debug.LogWarning("HealthManager: coinCollectedText non assegnato!");
         if (playerObject == null) playerObject = gameObject;
-
         UpdateHealthBar();
     }
 
     void Update()
     {
         if (!isDead && transform.position.y < fallYThreshold)
-        {
             Die();
-        }
     }
 
     public void TakeDamage(float amount)
     {
-        if (isDead || amount <= 0f) return;  
+        if (isDead || amount <= 0f) return;
 
         currentHealth = Mathf.Clamp(currentHealth - amount, 0f, maxHealth);
         UpdateHealthBar();
 
         if (currentHealth <= 0f)
-        {
             Die();
-        }
     }
 
     public void Heal(float amount)
@@ -59,39 +50,33 @@ public class HealthManager : MonoBehaviour
         UpdateHealthBar();
     }
 
-    private void UpdateHealthBar()
-    {
-        if (healthBarUI != null)
-        {
-            healthBarUI.SetHealth(currentHealth, maxHealth);
-        }
-    }
-
     private void Die()
     {
         if (isDead) return;
 
         isDead = true;
-        currentHealth = 0f;
+
+        if (CheckpointSystem.Instance != null)
+            CheckpointSystem.Instance.RespawnPlayer();
+
+        isDead = false;
         UpdateHealthBar();
+    }
 
-        if (losePanel != null)
-        {
-            losePanel.SetActive(true);
+    private void UpdateHealthBar()
+    {
+        if (healthBarUI != null)
+            healthBarUI.SetHealth(currentHealth, maxHealth);
+    }
 
-            if (playerObject != null && playerObject.TryGetComponent<CoinCollection>(out var coinScript))
-            {
-                int coins = coinScript.GetCoinCount();
-                if (coinCollectedText != null)
-                {
-                    coinCollectedText.text = "Monete: " + coins;
-                }
-            }
-        }
+    public void SetHealth(float value)
+    {
+        currentHealth = value;
+        UpdateHealthBar();
+    }
 
-        if (playerObject != null && playerObject.TryGetComponent<ThirdPersonMovement>(out var pc))
-        {
-            pc.enabled = false;
-        }
+    public float CurrentHealth()
+    {
+        return currentHealth;
     }
 }
