@@ -43,6 +43,8 @@ public class ThirdPersonMovement : MonoBehaviour
     {
         if (animator != null)
         {
+            animator.Rebind();
+            animator.Update(0f);
             animator.SetFloat("speed", 0f);
             animator.SetBool("isJumping", false);
         }
@@ -50,6 +52,7 @@ public class ThirdPersonMovement : MonoBehaviour
         isJumpingInternal = false;
         velocity = Vector3.zero;
     }
+
 
     void Update()
     {

@@ -27,7 +27,7 @@ public class ArchTrigger : MonoBehaviour
     {
         int collected = playerCoinCollection.GetCoinCount();
 
-        if (collected > coinsNeeded)
+        if (collected >= coinsNeeded)
         {
             levelCompleted = true;
             winPanel.SetActive(true);

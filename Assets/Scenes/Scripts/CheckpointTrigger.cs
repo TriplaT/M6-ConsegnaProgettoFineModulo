@@ -12,6 +12,6 @@ public class CheckpointTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player") && CheckpointSystem.Instance != null)
-            CheckpointSystem.Instance.SaveCheckpoint(other.transform.position);
+            CheckpointSystem.Instance.SaveCheckpoint(transform.position);
     }
 }

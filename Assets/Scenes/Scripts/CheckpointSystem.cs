@@ -37,26 +37,27 @@ public class CheckpointSystem : MonoBehaviour
     {
         consecutiveDeaths++;
 
-        if (!hasCheckpoint)
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-            return;
-        }
-
-        if (consecutiveDeaths >= maxConsecutiveDeaths)
+        if (!hasCheckpoint || consecutiveDeaths >= maxConsecutiveDeaths)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             return;
         }
 
         if (player != null) player.transform.position = lastCheckpointPos;
+
         if (coinCollection != null) coinCollection.SetCoinCount(savedCoins);
         if (healthManager != null) healthManager.SetHealth(savedHealth);
 
-        if (player.TryGetComponent<ThirdPersonMovement>(out var move))
+        if (player.TryGetComponent<ThirdPersonMovement>(out var thirdPersonMovement))
         {
-            move.enabled = false;
-            move.enabled = true;
+            thirdPersonMovement.ResetAnimator();
+        }
+        else if (player.TryGetComponent<Animator>(out var anim))
+        {
+            anim.Rebind();
+            anim.Update(0f);
+            anim.SetFloat("speed", 0f);
+            anim.SetBool("isJumping", false);
         }
 
         Debug.Log($"Respawn al checkpoint. Morti consecutive: {consecutiveDeaths}");
